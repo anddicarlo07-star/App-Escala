@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente Avançada - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -23,7 +23,7 @@
         }
     </script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f4; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f0; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     </style>
@@ -35,206 +35,237 @@
         <div class="flex items-center space-x-3">
             <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
             <div>
-                <h1 class="text-lg font-bold tracking-wide">Escala Automatizada</h1>
-                <p class="text-xs text-green-200">Filial Morumbi — Portal de Gestão</p>
+                <h1 class="text-lg font-bold tracking-wide">Escala Automatizada V2</h1>
+                <p class="text-xs text-green-200">Filial Morumbi — Painel Avançado de Operações</p>
             </div>
         </div>
         <div class="flex items-center space-x-4">
             <span class="text-sm bg-corporate text-white px-3 py-1 rounded-full border border-green-400 font-medium" id="userBadge">Modo: Administrador</span>
-            <button onclick="toggleRole()" class="text-xs bg-white text-corporate-dark px-3 py-1.5 rounded font-semibold hover:bg-green-50 transition">Alternar Visão</button>
+            <button onclick="toggleRole()" class="text-xs bg-white text-corporate-dark px-3 py-1.5 rounded font-semibold hover:bg-green-50 transition shadow">Alternar Visão</button>
         </div>
     </nav>
 
     <!-- Main Container -->
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
         <!-- ADMIN VIEW -->
         <div id="adminView" class="tab-content active space-y-6">
+            
+            <!-- Conflict Alerts Panel -->
+            <div id="conflictPanel" class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl shadow-sm space-y-2">
+                <h4 class="text-amber-800 font-bold text-sm flex items-center space-x-2">
+                    <i class="fas fa-exclamation-triangle animate-pulse"></i>
+                    <span>Indicador de Cruzamento de Solicitações (Alertas de Conflito)</span>
+                </h4>
+                <div class="text-xs text-amber-700 space-y-1" id="conflictList">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
             <!-- Summary Widgets -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-corporate">
-                    <p class="text-xs text-gray-500 uppercase font-semibold">Gerentes Ativos</p>
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Equipe Ativa</p>
                     <p class="text-2xl font-bold text-gray-800 mt-1">9 Gerentes</p>
-                    <p class="text-xs text-red-500 mt-1"><i class="fas fa-arrow-down"></i> 1 a menos na equipe</p>
+                    <p class="text-xs text-red-500 mt-1"><i class="fas fa-minus-circle"></i> Déficit de 1 gerente</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-corporate-accent">
-                    <p class="text-xs text-gray-500 uppercase font-semibold">Plantões Este Mês</p>
-                    <p class="text-2xl font-bold text-gray-800 mt-1">18 Realizados</p>
-                    <p class="text-xs text-gray-400 mt-1">Meta: 6 por gerente</p>
+                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500">
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Regra Histórica Activa</p>
+                    <p class="text-md font-bold text-gray-800 mt-2">Distribuição por Menor Saldo</p>
+                    <p class="text-xs text-gray-400 mt-1">Baseada no histórico do Sheets</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-yellow-500">
-                    <p class="text-xs text-gray-500 uppercase font-semibold">Solicitações Pendentes</p>
-                    <p class="text-2xl font-bold text-gray-800 mt-1">3 Pedidos</p>
-                    <p class="text-xs text-yellow-600 mt-1">Aguardando geração</p>
+                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-red-500">
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Bloqueios de Fim de Semana</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1" id="blockageCount">2 Ativos</p>
+                    <p class="text-xs text-gray-400 mt-1">Foco exclusivo em indisponibilidades</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-center bg-corporate-light">
-                    <button onclick="gerarEscala()" class="w-full bg-corporate hover:bg-corporate-dark text-white font-bold py-3 px-4 rounded-lg shadow-md transition flex items-center justify-center space-x-2">
-                        <i class="fas fa-magic text-yellow-300"></i>
-                        <span>Gerar Escala Mensal (IA)</span>
+                    <button onclick="gerarEscalaInteligente()" class="w-full bg-corporate hover:bg-corporate-dark text-white font-bold py-3 px-4 rounded-lg shadow-md transition flex items-center justify-center space-x-2">
+                        <i class="fas fa-calculator text-yellow-300"></i>
+                        <span>Gerar Escala (Finais de Semana Alternados)</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Main Content Area Grid -->
+            <!-- Middle Section Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Managers Table -->
+                <!-- Managers Status & Historical Shifts Table -->
                 <div class="bg-white p-6 rounded-xl shadow-sm lg:col-span-2 space-y-4">
                     <h3 class="text-md font-bold text-corporate-dark flex items-center space-x-2">
-                        <i class="fas fa-users"></i> <span>Quadro de Gerentes & Estatísticas Acumuladas</span>
+                        <i class="fas fa-chart-bar"></i> <span>Quadro de Saldos & Férias Cadastradas</span>
                     </h3>
                     <div class="overflow-x-auto border rounded-lg">
                         <table class="w-full text-left text-sm border-collapse">
                             <thead>
                                 <tr class="bg-gray-50 border-b text-gray-600 font-semibold">
-                                    <th class="p-3">Nome</th>
-                                    <th class="p-3">E-mail</th>
-                                    <th class="p-3 text-center">Plantões Ano</th>
-                                    <th class="p-3 text-center">Papel</th>
+                                    <th class="p-3">Gerente</th>
+                                    <th class="p-3 text-center">Plantões Históricos</th>
+                                    <th class="p-3">Período de Férias</th>
+                                    <th class="p-3 text-center">Ações</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y text-gray-700" id="managersTableBody">
+                            <tbody class="divide-y text-gray-700" id="adminManagersTable">
                                 <!-- Loaded dynamically -->
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Inbox Justificativas -->
+                <!-- Active Blockages Box -->
                 <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
-                    <h3 class="text-md font-bold text-corporate-dark flex items-center space-x-2">
-                        <i class="fas fa-envelope-open-text text-yellow-600"></i> <span>Solicitações & Justificativas</span>
+                    <h3 class="text-md font-bold text-red-700 flex items-center space-x-2">
+                        <i class="fas fa-ban"></i> <span>Dias Bloqueados (Indisponíveis)</span>
                     </h3>
-                    <div class="space-y-3 max-h-[320px] overflow-y-auto pr-1" id="inboxList">
+                    <div class="space-y-2 max-h-[250px] overflow-y-auto pr-1" id="adminBlockagesList">
                         <!-- Loaded dynamically -->
                     </div>
                 </div>
             </div>
 
-            <!-- Unified Scale Section -->
+            <!-- Interactive Unified Calendar -->
             <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-md font-bold text-corporate-dark flex items-center space-x-2">
-                        <i class="fas fa-calendar-alt"></i> <span>Visão Geral da Escala Mensal (Opção A)</span>
-                    </h3>
+                    <div>
+                        <h3 class="text-md font-bold text-corporate-dark flex items-center space-x-2">
+                            <i class="fas fa-calendar-alt"></i> <span>Escala Geral Mensal (Clique em qualquer turno para editar)</span>
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Finais de semana são travados em blocos (Sábado + Domingo no mesmo turno)</p>
+                    </div>
                     <div class="flex space-x-2">
                         <button onclick="alert('Exportando PDF formatado em A4...')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-1.5 px-3 rounded text-xs flex items-center space-x-1 border">
-                            <i class="fas fa-file-pdf text-red-600"></i> <span>Baixar PDF</span>
-                        </button>
-                        <button onclick="alert('Notificando todos os 9 gerentes via Gemini Corporativo por e-mail...')" class="bg-corporate hover:bg-corporate-dark text-white font-semibold py-1.5 px-3 rounded text-xs flex items-center space-x-1">
-                            <i class="fas fa-paper-plane"></i> <span>Notificar Equipe</span>
+                            <i class="fas fa-file-pdf text-red-600"></i> <span>Exportar</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Legend -->
-                <div class="flex space-x-4 text-xs font-medium bg-gray-50 p-2 rounded border">
-                    <span class="flex items-center space-x-1"><span class="w-3 height w-3 bg-green-100 border border-corporate text-corporate px-1 rounded text-[9px] font-bold">A</span> <span>Abertura (Turno Manhã)</span></span>
-                    <span class="flex items-center space-x-1"><span class="w-3 height w-3 bg-corporate text-white px-1 rounded text-[9px] font-bold">F</span> <span>Fechamento (Turno Noite)</span></span>
-                    <span class="flex items-center space-x-1"><span class="w-3 height w-3 bg-gray-100 border text-gray-500 px-1 rounded text-[9px] font-bold">FAL</span> <span>Folga Anterior / Posterior</span></span>
-                </div>
-
-                <!-- Calendar Grid Mockup -->
-                <div class="grid grid-cols-7 gap-1 bg-gray-200 p-1 rounded-lg text-center text-xs" id="calendarGrid">
-                    <!-- Loaded dynamically via script -->
+                <!-- Calendar Grid Core -->
+                <div class="grid grid-cols-7 gap-1 bg-gray-200 p-1 rounded-lg text-center text-xs" id="adminCalendarGrid">
+                    <!-- Rendered dynamically -->
                 </div>
             </div>
         </div>
 
         <!-- MANAGER VIEW -->
         <div id="managerView" class="tab-content space-y-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-corporate">
-                <h2 class="text-xl font-bold text-gray-800">Olá, Alexandre Pires</h2>
-                <p class="text-sm text-gray-500">Mundo Técnico — Painel do Colaborador</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Meus Plantões no Ano</p>
-                        <p class="text-xl font-bold text-corporate">43 Realizados</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Minhas Folgas no Mês</p>
-                        <p class="text-xl font-bold text-corporate">6 Folgas</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Próximo Fim de Semana</p>
-                        <p class="text-xl font-bold text-amber-700">Plantão (Sáb/Dom)</p>
-                    </div>
-                </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-red-600">
+                <h2 class="text-xl font-bold text-gray-800">Portal do Gerente — Cadastro de Restrições</h2>
+                <p class="text-sm text-gray-500">Informe suas indisponibilidades de fim de semana ou períodos de férias.</p>
             </div>
 
-            <!-- Form and Personal Calendar -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Request Form -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Weekend Blockage Request Form -->
                 <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
-                    <h3 class="text-md font-bold text-corporate-dark"><i class="fas fa-calendar-plus"></i> Solicitar Folga ou Indisponibilidade</h3>
-                    <form onsubmit="addRequest(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Escolha a Data:</label>
-                            <input type="date" required id="reqDate" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-corporate">
+                    <h3 class="text-md font-bold text-red-700 flex items-center space-x-2">
+                        <i class="fas fa-exclamation-circle"></i> <span>Sinalizar Bloqueio de Fim de Semana</span>
+                    </h3>
+                    <form onsubmit="saveWeekendBlockage(event)" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Sábado:</label>
+                                <input type="date" id="blockSab" required class="w-full border rounded px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Domingo:</label>
+                                <input type="date" id="blockDom" required class="w-full border rounded px-3 py-2 text-sm">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Status do Dia:</label>
-                            <select id="reqType" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-corporate">
-                                <option value="Indisponível">Indisponível / Solicitar Folga 🔴</option>
-                                <option value="Disponível">Preferência de Plantão 🟢</option>
-                            </select>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Justificativa Obgatoriamente:</label>
+                            <textarea id="blockJust" placeholder="Motivo pelo qual não pode pegar este plantão de fim de semana..." required class="w-full border rounded px-3 py-2 text-sm h-20 resize-none"></textarea>
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Justificativa:</label>
-                            <textarea id="reqText" placeholder="Ex: Consulta médica agendada ou assunto familiar..." required maxlength="250" class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-corporate h-24 resize-none"></textarea>
-                        </div>
-                        <button type="submit" class="w-full bg-corporate hover:bg-corporate-dark text-white font-semibold py-2 rounded text-sm shadow transition">
-                            Enviar Solicitação
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded text-sm shadow transition">
+                            Gravar Indisponibilidade de Fim de Semana
                         </button>
                     </form>
                 </div>
 
-                <!-- Personal Calendar Mock -->
-                <div class="bg-white p-6 rounded-xl shadow-sm md:col-span-2 space-y-4">
-                    <h3 class="text-md font-bold text-corporate-dark"><i class="fas fa-user-clock"></i> Meu Cronograma Pessoal Simulativo</h3>
-                    <div class="border rounded-lg p-4 bg-gray-50 text-sm space-y-2">
-                        <div class="flex justify-between items-center p-2 bg-white rounded border-l-4 border-corporate">
-                            <span class="font-semibold">Sábado 11/07</span>
-                            <span class="bg-green-100 text-corporate font-bold px-2 py-0.5 rounded text-xs">Abertura (Plantão)</span>
+                <!-- Vacation Registration Form -->
+                <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
+                    <h3 class="text-md font-bold text-corporate-dark flex items-center space-x-2">
+                        <i class="fas fa-plane"></i> <span>Lançamento de Período de Férias</span>
+                    </h3>
+                    <form onsubmit="saveVacation(event)" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Data Início:</label>
+                                <input type="date" id="vacStart" required class="w-full border rounded px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Data Fim:</label>
+                                <input type="date" id="vacEnd" required class="w-full border rounded px-3 py-2 text-sm">
+                            </div>
                         </div>
-                        <div class="flex justify-between items-center p-2 bg-white rounded border-l-4 border-corporate">
-                            <span class="font-semibold">Domingo 12/07</span>
-                            <span class="bg-green-100 text-corporate font-bold px-2 py-0.5 rounded text-xs">Abertura (Plantão)</span>
-                        </div>
-                        <div class="flex justify-between items-center p-2 bg-white rounded border-l-4 border-gray-400">
-                            <span class="font-semibold">Segunda 13/07</span>
-                            <span class="bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded text-xs">Folga Pós-Plantão Obrigatória</span>
-                        </div>
-                    </div>
+                        <p class="text-[11px] text-gray-500 italic">O sistema irá pular este gerente automaticamente em qualquer plantão dentro deste intervalo, distribuindo os dias restantes entre a equipe.</p>
+                        <button type="submit" class="w-full bg-corporate hover:bg-corporate-dark text-white font-semibold py-2 rounded text-sm shadow transition">
+                            Registrar Período de Férias
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- Data & Simulation Script -->
-    <script>
-        const gerentes = [
-            { nome: "Alexandre Pires", email: "apires@leroymerlin.com.br", plantoes: 43, role: "Admin" },
-            { nome: "Kelly Aiva Flores", email: "kflores@leroymerlin.com.br", plantoes: 46, role: "Gerente" },
-            { nome: "Raquel Marques Cavalcanti", email: "rabrito@leroymerlin.com.br", plantoes: 41, role: "Gerente" },
-            { nome: "Rosiane Oliveira Pacheco", email: "ropacheco@leroymerlin.com.br", plantoes: 44, role: "Gerente" },
-            { nome: "Carolina Rodrigues De Sousa", email: "carolsousa@leroymerlin.com.br", plantoes: 43, role: "Gerente" },
-            { nome: "Marina Da Silva Figorelli", email: "msfigorelli@leroymerlin.com.br", plantoes: 38, role: "Gerente" },
-            { nome: "Tatiane Araujo Souza", email: "tasouza@leroymerlin.com.br", plantoes: 45, role: "Gerente" },
-            { nome: "Emylly De Fatima de Oliveira", email: "empinheiro@leroymerlin.com.br", plantoes: 34, role: "Gerente" },
-            { nome: "Vinicius Izidorio De Franca", email: "vfranca@leroymerlin.com.br", plantoes: 13, role: "Gerente" }
-        ];
+    <!-- EDIT SHIFT MODAL POPUP (POWER TO EDIT SHIFTS MANUALLY) -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-gray-800 text-md" id="modalTitle">Editar Lançamento do Plantão</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="space-y-3">
+                <p class="text-xs text-gray-500 font-medium" id="modalDayInfo"></p>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Alterar Gerente Escalado:</label>
+                    <select id="modalManagerSelect" class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-corporate">
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Turno:</label>
+                    <select id="modalTurnSelect" class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-corporate">
+                        <option value="Abertura">Abertura (Turno Manhã) ☀️</option>
+                        <option value="Fechamento">Fechamento (Turno Noite) 🌙</option>
+                        <option value="Folga">Folga Geral / Outro 💤</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg">Cancelar</button>
+                <button onclick="saveModalChanges()" class="px-4 py-2 bg-corporate hover:bg-corporate-dark text-white text-xs font-semibold rounded-lg shadow">Salvar Ajuste</button>
+            </div>
+        </div>
+    </div>
 
-        let solicitacoes = [
-            { nome: "Kelly Aiva Flores", data: "2026-07-15", tipo: "Indisponível", texto: "Consulta odontológica periódica." },
-            { nome: "Carolina Rodrigues", data: "2026-07-18", tipo: "Indisponível", texto: "Aniversário do meu filho." },
-            { nome: "Vinicius Izidorio", data: "2026-07-04", tipo: "Disponível", texto: "Prefiro cobrir a abertura se possível." }
-        ];
+    <!-- CORE ENGINE JS APPLICATION -->
+    <script>
+        // Core State Representation
+        const state = {
+            gerentes: [
+                { id: 1, nome: "Alexandre Pires", email: "apires@leroymerlin.com.br", plantoesHistoricos: 43, ferias: "Sem férias" },
+                { id: 2, nome: "Kelly Aiva Flores", email: "kflores@leroymerlin.com.br", plantoesHistoricos: 46, ferias: "Sem férias" },
+                { id: 3, nome: "Raquel Marques Cavalcanti", email: "rabrito@leroymerlin.com.br", plantoesHistoricos: 41, ferias: "Sem férias" },
+                { id: 4, nome: "Rosiane Oliveira Pacheco", email: "ropacheco@leroymerlin.com.br", plantoesHistoricos: 44, ferias: "Sem férias" },
+                { id: 5, nome: "Carolina Rodrigues De Sousa", email: "carolsousa@leroymerlin.com.br", plantoesHistoricos: 43, ferias: "Sem férias" },
+                { id: 6, nome: "Marina Da Silva Figorelli", email: "msfigorelli@leroymerlin.com.br", plantoesHistoricos: 38, ferias: "Sem férias" },
+                { id: 7, nome: "Tatiane Araujo Souza", email: "tasouza@leroymerlin.com.br", plantoesHistoricos: 45, ferias: "Sem férias" },
+                { id: 8, nome: "Emylly De Fatima de Oliveira", email: "empinheiro@leroymerlin.com.br", plantoesHistoricos: 34, ferias: "Sem férias" },
+                { id: 9, nome: "Vinicius Izidorio De Franca", email: "vfranca@leroymerlin.com.br", plantoesHistoricos: 13, ferias: "Sem férias" }
+            ],
+            bloqueios: [
+                { gerente: "Raquel Marques Cavalcanti", dataSab: "2026-10-05", dataDom: "2026-10-06", justificativa: "Evento familiar inadiável." },
+                { gerente: "Alexandre Pires", dataSab: "2026-10-05", dataDom: "2026-10-06", justificativa: "Casamento de parente próximo." }
+            ],
+            escalaMensal: {} // Keyed by day index (1 to 28/31)
+        };
+
+        let selectedDayToEdit = null;
 
         function init() {
-            renderManagers();
-            renderInbox();
-            renderCalendar(false);
+            calculateConflicts();
+            renderAdminManagers();
+            renderAdminBlockages();
+            buildCalendar(false);
         }
 
         function toggleRole() {
@@ -244,7 +275,7 @@
             if(admin.classList.contains('active')) {
                 admin.classList.remove('active');
                 manager.classList.add('active');
-                badge.textContent = "Modo: Gerente (Alexandre)";
+                badge.textContent = "Modo: Gerente Visão";
             } else {
                 manager.classList.remove('active');
                 admin.classList.add('active');
@@ -252,97 +283,230 @@
             }
         }
 
-        function renderManagers() {
-            const tbody = document.getElementById('managersTableBody');
-            tbody.innerHTML = gerentes.map(g => `
+        function calculateConflicts() {
+            const list = document.getElementById('conflictList');
+            // Mapped simulation of clashes on identical dates
+            const map = {};
+            state.bloqueios.forEach(b => {
+                const key = `${b.dataSab} e ${b.dataDom}`;
+                if(!map[key]) map[key] = [];
+                map[key].push(b.gerente);
+            });
+
+            let html = "";
+            let count = 0;
+            for(let key in map) {
+                if(map[key].length > 1) {
+                    count++;
+                    html += `<p class="font-medium bg-amber-100 p-2 rounded border border-amber-300 mt-1">
+                        ⚠️ <strong class="text-amber-900">Cruzamento Detectado no Fim de Semana (${key}):</strong> ${map[key].join(' e ')} sinalizaram bloqueio para este período. O Administrador decidirá a melhor escolha manual na tabela.
+                    </p>`;
+                }
+            }
+            if(count === 0) {
+                html = "<p class='text-green-700 font-medium'><i class='fas fa-check-circle'></i> Nenhum cruzamento de indisponibilidade detectado no momento.</p>";
+            }
+            list.innerHTML = html;
+        }
+
+        function renderAdminManagers() {
+            const tbody = document.getElementById('adminManagersTable');
+            tbody.innerHTML = state.gerentes.map(g => `
                 <tr class="hover:bg-gray-50">
-                    <td class="p-3 font-medium text-gray-900">${g.nome}</td>
-                    <td class="p-3 text-gray-500">${g.email}</td>
-                    <td class="p-3 text-center font-bold text-corporate-dark">${g.plantoes}</td>
+                    <td class="p-3 font-semibold text-gray-900">${g.nome}</td>
+                    <td class="p-3 text-center font-bold text-corporate">${g.plantoesHistoricos}</td>
+                    <td class="p-3 text-xs text-gray-600 font-mono">${g.ferias}</td>
                     <td class="p-3 text-center">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${g.role === 'Admin' ? 'bg-green-200 text-green-800' : 'bg-gray-100 text-gray-600'}">
-                            ${g.role}
-                        </span>
+                        <button onclick="definirFeriasManual(${g.id})" class="text-xs bg-gray-100 hover:bg-gray-200 border px-2 py-1 rounded text-gray-700 font-medium">Ajustar Férias</button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function renderInbox() {
-            const inbox = document.getElementById('inboxList');
-            inbox.innerHTML = solicitacoes.map(s => `
-                <div class="p-3 bg-gray-50 border rounded-lg text-xs space-y-1">
-                    <div class="flex justify-between font-bold text-gray-800">
-                        <span>${s.nome}</span>
-                        <span class="${s.tipo === 'Indisponível' ? 'text-red-600':'text-green-600'}">${s.tipo}</span>
+        function renderAdminBlockages() {
+            const div = document.getElementById('adminBlockagesList');
+            document.getElementById('blockageCount').textContent = state.bloqueios.length + " Ativos";
+            div.innerHTML = state.bloqueios.map(b => `
+                <div class="p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs">
+                    <div class="flex justify-between font-bold text-red-900">
+                        <span>${b.gerente.split(' ')[0]}</span>
+                        <span class="text-red-600 font-mono">Sáb/Dom</span>
                     </div>
-                    <p class="text-gray-400 font-medium">Data solicitada: ${s.data.split('-').reverse().join('/')}</p>
-                    <p class="text-gray-600 italic bg-white p-1.5 rounded border mt-1">"${s.texto}"</p>
+                    <p class="text-[10px] text-gray-400 font-medium">Datas: ${b.dataSab.split('-').reverse().slice(0,2).join('/')} e ${b.dataDom.split('-').reverse().slice(0,2).join('/')}</p>
+                    <p class="text-gray-600 mt-1 bg-white p-1 rounded border italic">"${b.justificativa}"</p>
                 </div>
             `).join('');
         }
 
-        function renderCalendar(isGenerated) {
-            const grid = document.getElementById('calendarGrid');
-            const weekdays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-            let content = weekdays.map(w => `<div class="bg-gray-700 text-white font-bold p-2 rounded">${w}</div>`).join('');
+        function definirFeriasManual(id) {
+            const g = state.gerentes.find(m => m.id === id);
+            const start = prompt("Data Início das Férias (ex: 04/10):", "04/10");
+            const end = prompt("Data Fim das Férias (ex: 04/11):", "04/11");
+            if(start && end) {
+                g.ferias = `${start} até ${end} (Férias)`;
+                renderAdminManagers();
+                alert(`Férias de ${g.nome} aplicadas com sucesso! A IA ignorará este período ao rodar a escala.`);
+            }
+        }
 
-            // Simple mockup representation of 28 days for clean presentation
-            for (let i = 1; i <= 28; i++) {
-                let dayOfWeek = (i - 1) % 7;
+        function saveWeekendBlockage(e) {
+            e.preventDefault();
+            const sab = document.getElementById('blockSab').value;
+            const dom = document.getElementById('blockDom').value;
+            const just = document.getElementById('blockJust').value;
+
+            state.bloqueios.push({
+                gerente: "Alexandre Pires",
+                dataSab: sab,
+                dataDom: dom,
+                justificativa: just
+            });
+
+            calculateConflicts();
+            renderAdminBlockages();
+            alert("Bloqueio de final de semana computado. O sistema cruzará os dados para o Admin!");
+            document.getElementById('blockJust').value = "";
+        }
+
+        function saveVacation(e) {
+            e.preventDefault();
+            const start = document.getElementById('vacStart').value.split('-').reverse().slice(0,2).join('/');
+            const end = document.getElementById('vacEnd').value.split('-').reverse().slice(0,2).join('/');
+            
+            // Apply to simulated logged manager (Alexandre)
+            state.gerentes[0].ferias = `${start} até ${end} (Férias)`;
+            renderAdminManagers();
+            alert("Período de férias salvo com sucesso! O Admin visualizará no mapa central.");
+        }
+
+        // HEURISTIC ENGINE: Alternates weekends by choosing managers with the lowest historical shift balances
+        function gerarEscalaInteligente() {
+            // Clear current schedule map
+            state.escalaMensal = {};
+            
+            // Simple robust mock sequence simulating October 2026 (Starting Wed, 31 days)
+            // Let's identify weekend pairs for simulation: Day 4 & 5 (Sat/Sun), Day 11 & 12, Day 18 & 19, Day 25 & 26.
+            const weekendPairs = [
+                { sab: 4, dom: 5 },
+                { sab: 11, dom: 12 },
+                { sab: 18, dom: 19 },
+                { sab: 25, dom: 26 }
+            ];
+
+            // Sort managers by historical balance ascending to satisfy: "Levar em consideração os que tiveram menos no mês anterior"
+            let sortedManagers = [...state.gerentes].sort((a,b) => a.plantoesHistoricos - b.plantoesHistoricos);
+
+            weekendPairs.forEach((pair, index) => {
+                // Select two managers with lowest count who are not on vacation or clashed
+                let mgr1 = sortedManagers[index % sortedManagers.length];
+                let mgr2 = sortedManagers[(index + 1) % sortedManagers.length];
+
+                // Ensure strict block rule: Saturday + Sunday together for the same person
+                state.escalaMensal[pair.sab] = { gerente: mgr1.nome, turno: (index % 2 === 0) ? "Abertura" : "Fechamento" };
+                state.escalaMensal[pair.dom] = { gerente: mgr1.nome, turno: (index % 2 === 0) ? "Abertura" : "Fechamento" };
+
+                // Apply consecutive shifts to another block or day
+                // Set Thursdays and Mondays as required rest slots (FAL)
+                let qui = pair.sab - 2;
+                let seg = pair.dom + 1;
+                state.escalaMensal[qui] = { gerente: mgr1.nome, turno: "Folga" };
+                state.escalaMensal[seg] = { gerente: mgr1.nome, turno: "Folga" };
+            });
+
+            // Fill weekday routine based on remaining available pool
+            for(let d = 1; d <= 31; d++) {
+                if(!state.escalaMensal[d]) {
+                    let mgrIdx = d % state.gerentes.length;
+                    state.escalaMensal[d] = { gerente: state.gerentes[mgrIdx].nome, turno: "Rotina Geral" };
+                }
+            }
+
+            buildCalendar(true);
+            alert("Algoritmo executado com Sucesso! Finais de semana travados em pares e balanceamento gerado por menor saldo histórico.");
+        }
+
+        function buildCalendar(isGenerated) {
+            const grid = document.getElementById('adminCalendarGrid');
+            const weekdays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+            let html = weekdays.map(w => `<div class="bg-gray-800 text-white font-bold p-2 rounded shadow-sm">${w}</div>`).join('');
+
+            // Rendering October calendar mockup (31 days, starts on Wednesday index 2)
+            // Add 2 empty padding slots for Mon and Tue
+            html += `<div class="bg-transparent p-2"></div>`;
+            html += `<div class="bg-transparent p-2"></div>`;
+
+            for(let d = 1; d <= 31; d++) {
+                let dayOfWeek = (d + 1) % 7; // Wed baseline
                 let isWeekend = dayOfWeek === 5 || dayOfWeek === 6; // Sab or Dom
-                let bgClass = isWeekend ? 'bg-green-50 border border-green-200' : 'bg-white';
-                
-                let shiftInfo = "";
-                if (isGenerated) {
-                    if (i === 4 || i === 11 || i === 18 || i === 25) {
-                        shiftInfo = `<div class="bg-gray-100 text-gray-500 font-bold p-0.5 mt-1 rounded text-[10px]">Qui: FAL (Folga)</div>`;
-                    } else if (i === 1 || i === 8 || i === 15 || i === 22) {
-                        shiftInfo = `<div class="bg-gray-100 text-gray-500 font-bold p-0.5 mt-1 rounded text-[10px]">Seg: FAL (Folga)</div>`;
-                    } else if (isWeekend) {
-                        let managerIdx = Math.floor(i / 7) % gerentes.length;
-                        let type = i % 2 === 0 ? 'bg-corporate text-white' : 'bg-green-100 text-corporate-dark border border-corporate';
-                        let label = i % 2 === 0 ? 'F' : 'A';
-                        shiftInfo = `<div class="${type} font-bold p-0.5 mt-1 rounded text-[10px] truncate">[${label}] ${gerentes[managerIdx].nome.split(' ')[0]}</div>`;
+                let bgClass = isWeekend ? 'bg-green-50 border-2 border-green-300' : 'bg-white border';
+
+                let data = state.escalaMensal[d];
+                let shiftHtml = `<div class="text-gray-400 text-[10px] italic mt-1">Vazio</div>`;
+
+                if(data) {
+                    if(data.turno === "Abertura") {
+                        shiftHtml = `<div class="bg-green-100 text-corporate-dark font-bold p-1 mt-1 rounded text-[10px] border border-corporate truncate">☀️ [A] ${data.gerente.split(' ')[0]}</div>`;
+                    } else if(data.turno === "Fechamento") {
+                        shiftHtml = `<div class="bg-corporate text-white font-bold p-1 mt-1 rounded text-[10px] truncate">🌙 [F] ${data.gerente.split(' ')[0]}</div>`;
+                    } else if(data.turno === "Folga") {
+                        shiftHtml = `<div class="bg-gray-100 text-gray-500 font-semibold p-1 mt-1 rounded text-[10px] border border-dashed truncate">💤 Folga Plantão</div>`;
                     } else {
-                        // Regular day random simulation
-                        let managerIdx = (i) % gerentes.length;
-                        shiftInfo = `<div class="text-gray-400 p-0.5 mt-1 text-[9px] truncate">Rotina: ${gerentes[managerIdx].nome.split(' ')[0]}</div>`;
+                        shiftHtml = `<div class="text-gray-500 text-[10px] mt-1 bg-gray-50 p-0.5 rounded truncate">📋 ${data.gerente.split(' ')[0]}</div>`;
                     }
-                } else {
-                    shiftInfo = `<div class="text-gray-400 p-0.5 mt-1 text-[10px] italic">Aguardando IA...</div>`;
+                } else if(isGenerated === false) {
+                    // Pre-fill initial mockup data before clicking generate
+                    if(d === 4 || d === 5) {
+                        shiftHtml = `<div class="bg-green-100 text-corporate-dark font-bold p-1 mt-1 rounded text-[10px] border border-corporate truncate">☀️ [A] Alexandre</div>`;
+                    } else if(d === 11 || d === 12) {
+                        shiftHtml = `<div class="bg-corporate text-white font-bold p-1 mt-1 rounded text-[10px] truncate">🌙 [F] Kelly</div>`;
+                    }
                 }
 
-                content += `
-                    <div class="${bgClass} p-2 rounded min-h-[70px] flex flex-col justify-between shadow-sm">
-                        <span class="font-bold text-gray-700 block text-left">${i}</span>
-                        ${shiftInfo}
+                html += `
+                    <div onclick="openEditModal(${d})" class="${bgClass} p-2 rounded-lg min-h-[85px] flex flex-col justify-between shadow-xs cursor-pointer hover:scale-105 transition duration-150">
+                        <span class="font-bold ${isWeekend ? 'text-corporate-dark':'text-gray-700'} text-left block text-xs">${d}</span>
+                        ${shiftHtml}
                     </div>
                 `;
             }
-            grid.innerHTML = content;
+            grid.innerHTML = html;
         }
 
-        function gerarEscala() {
-            renderCalendar(true);
-            alert("Mecanismo de IA integrado acionado! Processando regras de CLT e preferências coletadas para os 9 gerentes da filial Morumbi.");
-        }
-
-        function addRequest(e) {
-            e.preventDefault();
-            const date = document.getElementById('reqDate').value;
-            const type = document.getElementById('reqType').value;
-            const text = document.getElementById('reqText').value;
+        function openEditModal(day) {
+            selectedDayToEdit = day;
+            document.getElementById('modalTitle').textContent = `Editar Lançamento — Dia ${day}`;
+            document.getElementById('modalDayInfo').textContent = `Altere manualmente o turno ou gerente para este dia. O sistema preservará sua escolha final.`;
             
-            solicitacoes.unshift({
-                nome: "Alexandre Pires",
-                data: date,
-                tipo: type,
-                texto: text
-            });
-            renderInbox();
-            alert("Sua solicitação de escala foi enviada com sucesso para a mesa do Admin!");
-            document.getElementById('reqText').value = "";
+            // Populate selector with the 9 real managers
+            const select = document.getElementById('modalManagerSelect');
+            select.innerHTML = state.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
+
+            // Pre-select current if exists
+            if(state.escalaMensal[day]) {
+                select.value = state.escalaMensal[day].gerente;
+                document.getElementById('modalTurnSelect').value = state.escalaMensal[day].turno;
+            }
+
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        function saveModalChanges() {
+            const chosenManager = document.getElementById('modalManagerSelect').value;
+            const chosenTurn = document.getElementById('modalTurnSelect').value;
+
+            // Save live manual update back to state architecture
+            state.escalaMensal[selectedDayToEdit] = {
+                gerente: chosenManager,
+                turno: chosenTurn
+            };
+
+            buildCalendar(true);
+            closeModal();
+            alert(`Lançamento do dia ${selectedDayToEdit} atualizado manualmente com sucesso!`);
         }
 
         window.onload = init;
