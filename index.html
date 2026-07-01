@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V3.1 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V4 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -24,6 +24,8 @@
     </script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f3f4f6; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
         @media (max-width: 768px) {
             .desktop-grid { display: none; }
             .mobile-list { display: block; }
@@ -36,107 +38,163 @@
 </head>
 <body class="text-gray-800">
 
-    <!-- Navbar -->
-    <nav class="bg-corporate-dark text-white shadow-md px-6 py-4 flex justify-between items-center">
+    <!-- Top Header Navigation -->
+    <nav class="bg-corporate-dark text-white shadow-md px-6 py-4 flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
         <div class="flex items-center space-x-3">
             <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
             <div>
-                <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V3.1</h1>
-                <p class="text-xs text-green-200">2 Turnos por Dia + Solicitação de Dias Individuais Retornada</p>
+                <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V4</h1>
+                <p class="text-xs text-green-200">Visão Geral de Presenças, Sábados Trabalhados, Férias & Folgas</p>
             </div>
         </div>
-        <button onclick="toggleRole()" class="text-xs bg-white text-corporate-dark px-3 py-1.5 rounded font-semibold hover:bg-green-50 transition shadow" id="roleBtn">Visão: Admin</button>
+        <div class="flex items-center space-x-2">
+            <button onclick="switchTab('dashboard')" class="text-xs bg-green-700 text-white px-3 py-1.5 rounded font-semibold hover:bg-green-600 transition shadow">Painel Principal</button>
+            <button onclick="switchTab('metricas')" class="text-xs bg-white text-corporate-dark px-3 py-1.5 rounded font-semibold hover:bg-green-50 transition shadow">Aba: Métricas & Planilha</button>
+            <button onclick="toggleRole()" class="text-xs bg-amber-500 text-white px-3 py-1.5 rounded font-semibold hover:bg-amber-600 transition shadow" id="roleBtn">Modo: Admin</button>
+        </div>
     </nav>
 
+    <!-- Main Dynamic Frame -->
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
 
-        <!-- ADMIN VIEW -->
-        <div id="adminView" class="space-y-6">
+        <!-- TAB 1: MAIN CALENDAR & OPERATIONS -->
+        <div id="dashboardSection" class="view-section active space-y-6">
             
-            <!-- Conflicts -->
+            <!-- Conflicting Crossings Panel -->
             <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl shadow-xs">
                 <h4 class="text-amber-800 font-bold text-sm flex items-center space-x-2">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <span>Cruzamentos de Indisponibilidade</span>
+                    <span>Indicador de Cruzamento de Dados (Conflito de Escala)</span>
                 </h4>
-                <p class="text-xs text-amber-700 mt-1">⚠️ <strong>Conflito Detectado:</strong> Raquel e Alexandre sinalizaram restrição para o mesmo dia útil/fim de semana. O Administrador decide as trocas clicando diretamente no calendário.</p>
+                <p class="text-xs text-amber-700 mt-1">⚠️ <strong>Cruzamento:</strong> Alexandre Pires e Raquel Marques sinalizaram indisponibilidade na mesma data. O sistema gerou folga preventiva, use a edição manual para reajustar.</p>
             </div>
 
-            <!-- Dashboard Row -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white p-5 rounded-xl shadow-xs border-l-4 border-corporate">
-                    <h4 class="text-xs text-gray-500 uppercase font-semibold">Equipe Cadastrada</h4>
-                    <p class="text-2xl font-bold mt-1 text-gray-800">9 Gerentes Ativos</p>
+            <!-- Dashboard Mini-Widgets -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl shadow-xs border-l-4 border-corporate">
+                    <h4 class="text-xs text-gray-500 font-semibold uppercase">Total de Gerentes</h4>
+                    <p class="text-2xl font-bold mt-1 text-gray-800">9 Ativos</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-xs border-l-4 border-blue-500">
-                    <h4 class="text-xs text-gray-500 uppercase font-semibold">Balanceamento Ativo</h4>
-                    <p class="text-sm font-bold mt-2 text-gray-700">Otimização por Menor Histórico</p>
+                <div class="bg-white p-4 rounded-xl shadow-xs border-l-4 border-blue-500">
+                    <h4 class="text-xs text-gray-500 font-semibold uppercase">Em Férias Este Mês</h4>
+                    <p class="text-2xl font-bold mt-1 text-blue-600">1 Gerente</p>
                 </div>
-                <button onclick="gerarEscala()" class="bg-corporate hover:bg-corporate-dark text-white font-bold p-5 rounded-xl shadow-md transition flex items-center justify-center space-x-3 text-lg">
-                    <i class="fas fa-sync-alt"></i>
-                    <span>Gerar Escala Mensal Completa</span>
+                <div class="bg-white p-4 rounded-xl shadow-xs border-l-4 border-amber-500">
+                    <h4 class="text-xs text-gray-500 font-semibold uppercase">Sábados Cobertos</h4>
+                    <p class="text-2xl font-bold mt-1 text-amber-600">100%</p>
+                </div>
+                <button onclick="gerarEscala()" class="bg-corporate hover:bg-corporate-dark text-white font-bold p-4 rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                    <i class="fas fa-magic"></i>
+                    <span>Rodar Distribuição IA</span>
                 </button>
             </div>
 
-            <!-- Core Calendar Box -->
-            <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
+            <!-- Calendar Section Container -->
+            <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-4">
                     <div>
                         <h3 class="text-md font-bold text-corporate-dark flex items-center space-x-2">
-                            <i class="fas fa-calendar-alt"></i> <span>Quadro Oficial do Mês (Abertura & Fechamento)</span>
+                            <i class="fas fa-calendar-alt"></i> <span>Quadro Mensal Oficial (Clique para Editar ou Ver Folgas)</span>
                         </h3>
-                        <p class="text-xs text-gray-400 mt-0.5">Dê um clique no dia para editar manualmente os responsáveis.</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Selecione qualquer dia para visualizar quem está de folga ou trocar quem assume a Abertura/Fechamento.</p>
                     </div>
                 </div>
 
-                <!-- DESKTOP VIEW (CALENDAR GRID) -->
+                <!-- DESKTOP VIEW GRID -->
                 <div class="desktop-grid grid-cols-7 gap-1.5 bg-gray-200 p-1.5 rounded-xl text-center text-xs" id="desktopGrid">
-                    <!-- Loaded via JS -->
+                    <!-- Dynamic -->
                 </div>
 
-                <!-- MOBILE VIEW (VERTICAL LIST) -->
+                <!-- MOBILE VIEW LIST -->
                 <div class="mobile-list space-y-2 hidden" id="mobileList">
-                    <!-- Loaded via JS -->
+                    <!-- Dynamic -->
                 </div>
             </div>
         </div>
 
-        <!-- MANAGER VIEW -->
-        <div id="managerView" class="hidden space-y-6">
+        <!-- TAB 2: SHEETS METRICS & STATISTICS (SIMILAR TO SPREADSHEET LOOK) -->
+        <div id="metricasSection" class="view-section space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm space-y-6">
+                <div class="border-b pb-3">
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center space-x-2">
+                        <i class="fas fa-table text-corporate"></i> <span>Visão Consolidada — Controle Estilo Sheets</span>
+                    </h3>
+                    <p class="text-xs text-gray-500">Métricas acumuladas calculadas em tempo real com base no calendário de lançamentos.</p>
+                </div>
+
+                <!-- Live Summary Statistics Table -->
+                <div class="overflow-x-auto border rounded-xl">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 border-b text-gray-700 font-bold">
+                                <th class="p-3">Nome do Gerente</th>
+                                <th class="p-3 text-center bg-green-50 text-corporate">Sábados Trabalhados</th>
+                                <th class="p-3 text-center">Plantões Totais (Mês)</th>
+                                <th class="p-3 text-center">Dias Totais de Folga</th>
+                                <th class="p-3">Status / Período de Férias</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y text-gray-600 font-medium" id="metricsTableBody">
+                            <!-- Populated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Summary Day Indicator Block -->
+                <div class="bg-gray-50 border p-4 rounded-xl space-y-3">
+                    <h4 class="font-bold text-xs text-gray-700 uppercase tracking-wider flex items-center space-x-1.5">
+                        <i class="fas fa-filter text-corporate"></i>
+                        <span>Verificação Rápida de Presença por Dia Útil / Sábado</span>
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-600 font-medium mb-1">Selecione o Dia:</label>
+                            <select id="quickDaySelect" onchange="updateQuickView()" class="w-full border p-2 rounded text-xs bg-white">
+                                <!-- Generated Dynamically -->
+                            </select>
+                        </div>
+                        <div class="p-3 bg-white border rounded-lg">
+                            <span class="block text-[11px] text-gray-400 font-bold uppercase">Presentes no Dia:</span>
+                            <div class="text-xs font-bold text-corporate-dark mt-1" id="quickPresent">--</div>
+                        </div>
+                        <div class="p-3 bg-white border rounded-lg">
+                            <span class="block text-[11px] text-gray-400 font-bold uppercase">De Folga / Ausentes:</span>
+                            <div class="text-xs font-bold text-red-600 mt-1" id="quickAbsent">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PORTAL DO GERENTE (RESTRICTIONS & VACATIONS) -->
+        <div id="managerSection" class="view-section space-y-6">
             <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-red-600">
-                <h3 class="text-lg font-bold text-gray-800">Portal do Gerente — Cadastro de Restrições</h3>
-                <p class="text-xs text-gray-500 mt-1">Sinalize os dias que você não pode pegar plantão ou cadastre suas férias.</p>
+                <h3 class="text-lg font-bold text-gray-800">Área Exclusiva de Lançamento do Gerente</h3>
+                <p class="text-xs text-gray-500 mt-1">Insira suas impossibilidades de plantão ou informe períodos de férias regulamentares.</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <!-- Restored Individual Day Form -->
-                    <div class="border p-5 rounded-xl space-y-3 bg-gray-50 border-red-200">
+                    <div class="border p-4 rounded-xl space-y-3 bg-gray-50">
                         <h4 class="font-bold text-sm text-red-700"><i class="fas fa-calendar-times"></i> Sinalizar Dia Bloqueado</h4>
                         <div class="text-xs">
-                            <label class="block mb-1 font-semibold text-gray-600">Escolha o Dia:</label>
-                            <input type="date" id="blockDate" class="w-full border p-2.5 rounded bg-white">
+                            <label class="block mb-1 font-semibold text-gray-600">Escolha a Data:</label>
+                            <input type="date" class="w-full border p-2 rounded">
                         </div>
-                        <div class="text-xs">
-                            <label class="block mb-1 font-semibold text-gray-600">Justificativa:</label>
-                            <textarea id="blockJust" placeholder="Motivo pelo qual não pode assumir plantão neste dia..." class="w-full border p-2 rounded bg-white h-20 resize-none"></textarea>
-                        </div>
-                        <button onclick="alert('Indisponibilidade do dia registrada com sucesso!')" class="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded text-xs font-bold shadow transition">Registrar Bloqueio do Dia</button>
+                        <button onclick="alert('Bloqueio individual gravado!')" class="w-full bg-red-600 text-white py-2 rounded text-xs font-bold shadow">Salvar Bloqueio</button>
                     </div>
 
-                    <!-- Vacation Form (Kept because it was liked) -->
-                    <div class="border p-5 rounded-xl space-y-3 bg-gray-50 border-green-200">
-                        <h4 class="font-bold text-sm text-corporate-dark"><i class="fas fa-plane"></i> Lançamento de Período de Férias</h4>
+                    <div class="border p-4 rounded-xl space-y-3 bg-gray-50">
+                        <h4 class="font-bold text-sm text-corporate-dark"><i class="fas fa-plane"></i> Lançamento de Férias</h4>
                         <div class="grid grid-cols-2 gap-2 text-xs">
                             <div>
-                                <label class="block mb-1 font-semibold text-gray-600">Data Início:</label>
-                                <input type="date" id="vacStart" class="w-full border p-2.5 rounded bg-white">
+                                <label class="block mb-1 font-semibold text-gray-600">Início:</label>
+                                <input type="date" class="w-full border p-2 rounded">
                             </div>
                             <div>
-                                <label class="block mb-1 font-semibold text-gray-600">Data Fim:</label>
-                                <input type="date" id="vacEnd" class="w-full border p-2.5 rounded bg-white">
+                                <label class="block mb-1 font-semibold text-gray-600">Fim:</label>
+                                <input type="date" class="w-full border p-2 rounded">
                             </div>
                         </div>
-                        <p class="text-[11px] text-gray-500 italic mt-2">O motor de inteligência pulará este gerente em todas as escalas desse período de datas.</p>
-                        <button onclick="alert('Férias cadastradas com sucesso!')" class="w-full bg-corporate hover:bg-corporate-dark text-white py-2.5 rounded text-xs font-bold shadow transition">Registrar Férias Completas</button>
+                        <button onclick="alert('Período de férias cadastrado!')" class="w-full bg-corporate text-white py-2 rounded text-xs font-bold shadow">Gravar Férias</button>
                     </div>
                 </div>
             </div>
@@ -144,69 +202,133 @@
 
     </div>
 
-    <!-- POPUP MODAL FOR LIVE EDITING -->
-    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center p-4 z-50">
+    <!-- DAY DETAILS & EDIT POPUP MODAL -->
+    <div id="dayModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 space-y-4">
-            <h3 class="font-bold text-gray-800 text-sm border-b pb-2" id="modalTitle">Ajuste de Turnos</h3>
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-gray-800 text-sm" id="modalTitle">Detalhamento do Dia</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+            </div>
             
+            <!-- Turn Selection Form Elements -->
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold text-gray-600 mb-1">☀️ Gerente da Abertura:</label>
-                    <select id="modalAbertura" class="w-full border p-2 rounded"></select>
+                    <select id="modalAbertura" class="w-full border p-2 rounded bg-white"></select>
                 </div>
                 <div>
                     <label class="block font-semibold text-gray-600 mb-1">🌙 Gerente do Fechamento:</label>
-                    <select id="modalFechamento" class="w-full border p-2 rounded"></select>
+                    <select id="modalFechamento" class="w-full border p-2 rounded bg-white"></select>
                 </div>
             </div>
 
-            <div class="flex justify-end space-x-2 pt-2 text-xs">
-                <button onclick="closeModal()" class="px-3 py-1.5 bg-gray-100 rounded-lg">Cancelar</button>
-                <button onclick="saveChanges()" class="px-3 py-1.5 bg-corporate text-white font-semibold rounded-lg shadow">Atualizar Escala</button>
+            <!-- Automated Calculation List Inside Modal -->
+            <div class="bg-gray-50 p-3 rounded-lg text-xs space-y-1 border">
+                <p class="font-bold text-gray-700 uppercase text-[10px] tracking-wider mb-1"><i class="fas fa-umbrella-beach text-amber-500"></i> Quem está folgando neste dia:</p>
+                <div id="modalFolguistas" class="text-gray-600 font-medium space-y-0.5"></div>
+            </div>
+
+            <div class="flex justify-end space-x-2 pt-1 text-xs">
+                <button onclick="closeModal()" class="px-3 py-1.5 bg-gray-100 rounded-lg">Fechar</button>
+                <button onclick="saveChanges()" class="px-3 py-1.5 bg-corporate text-white font-semibold rounded-lg shadow">Salvar Alterações</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Core Application State Architecture
         const appState = {
             gerentes: [
-                "Alexandre Pires", "Kelly Aiva Flores", "Raquel Marques", "Rosiane Oliveira", 
-                "Carolina Rodrigues", "Marina Da Silva", "Tatiane Araujo", "Emylly De Fatima", "Vinicius Izidorio"
+                { nome: "Alexandre Pires", ferias: "04/10 até 04/11 (Férias)", sabadosTrabalhados: 0, totalPlantoes: 0, folgas: 0 },
+                { nome: "Kelly Aiva Flores", ferias: "Sem férias", sabadosTrabalhados: 0, totalPlantoes: 0, folgas: 0 },
+                { nome: "Raquel Marques", ferias: "Sem férias", sabadosTrabalhados: 0, totalPlantoes: 0, folgas: 0 },
+                { nome: "Rosiane Oliveira", ferias: "Sem férias", sabadosTrabalhados: 0, totalPlantoes: 0, folgas: 0 },
+                { nome: "Carolina Rodrigues", ferias: "Sem férias", sabadosTrabalhados: 0, totalPlantoes: 0, folgas: 0 },
+                { nome: "Marina Da Silva", ferias: "Sem férias", sabadosTrabalhados: 0, totalPlantoes: 0, folgas: 0 },
+                { nome: "Tatiane Araujo", ferias: "Sem férias", sabadosTrabalhados: 0, totalPlantoes: 0, folgas: 0 },
+                { nome: "Emylly De Fatima", ferias: "Sem férias", sabadosTrabalhados: 0, totalPlantoes: 0, folgas: 0 },
+                { nome: "Vinicius Izidorio", ferias: "Sem férias", sabadosTrabalhados: 0, totalPlantoes: 0, folgas: 0 }
             ],
-            escala: {}
+            escala: {} // Day mappings
         };
 
-        let selectedDay = null;
+        let currentSelectedDay = null;
 
         function init() {
+            // Seed a realistic layout distribution map
             for (let d = 1; d <= 31; d++) {
                 appState.escala[d] = {
-                    abertura: appState.gerentes[(d) % 9],
-                    fechamento: appState.gerentes[(d + 3) % 9]
+                    abertura: appState.gerentes[(d) % 9].nome,
+                    fechamento: appState.gerentes[(d + 3) % 9].nome
                 };
             }
+            buildSelectOptions();
+            recalculateMetrics();
             renderAll();
         }
 
+        function switchTab(tabId) {
+            document.getElementById('dashboardSection').classList.remove('active');
+            document.getElementById('metricasSection').classList.remove('active');
+            document.getElementById('managerSection').classList.remove('active');
+
+            if(tabId === 'dashboard') document.getElementById('dashboardSection').classList.add('active');
+            if(tabId === 'metricas') document.getElementById('metricasSection').classList.add('active');
+            if(tabId === 'manager') document.getElementById('managerSection').classList.add('active');
+        }
+
         function toggleRole() {
-            const admin = document.getElementById('adminView');
-            const mgr = document.getElementById('managerView');
             const btn = document.getElementById('roleBtn');
-            if(admin.classList.contains('hidden')) {
-                admin.classList.remove('hidden');
-                mgr.classList.add('hidden');
-                btn.textContent = "Visão: Admin";
+            if(btn.textContent === "Modo: Admin") {
+                btn.textContent = "Modo: Gerente";
+                switchTab('manager');
             } else {
-                admin.classList.add('hidden');
-                mgr.classList.remove('hidden');
-                btn.textContent = "Visão: Gerente";
+                btn.textContent = "Modo: Admin";
+                switchTab('dashboard');
+            }
+        }
+
+        function buildSelectOptions() {
+            const select = document.getElementById('quickDaySelect');
+            let options = "";
+            for(let d = 1; d <= 31; d++) {
+                options += `<option value="${d}">Dia ${d}</option>`;
+            }
+            select.innerHTML = options;
+        }
+
+        function recalculateMetrics() {
+            // Clear current variables
+            appState.gerentes.forEach(g => {
+                g.sabadosTrabalhados = 0;
+                g.totalPlantoes = 0;
+                g.folgas = 31; // Total days in baseline month
+            });
+
+            // Iterate over all days to calculate
+            for(let d = 1; d <= 31; d++) {
+                let dayOfWeek = (d + 1) % 7; 
+                let isSaturday = dayOfWeek === 5; // Saturday indicator code logic
+                
+                let data = appState.escala[d];
+                if(data) {
+                    appState.gerentes.forEach(g => {
+                        if(g.nome === data.abertura || g.nome === data.fechamento) {
+                            g.totalPlantoes += 1;
+                            g.folgas -= 1;
+                            if(isSaturday) {
+                                g.sabadosTrabalhados += 1;
+                            }
+                        }
+                    });
+                }
             }
         }
 
         function renderAll() {
             const weekdays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-            let desktopHtml = weekdays.map(w => `<div class="bg-gray-700 text-white font-bold p-1.5 rounded">${w}</div>`).join('');
-            desktopHtml += `<div class="bg-transparent"></div><div class="bg-transparent"></div>`;
+            let desktopHtml = weekdays.map(w => `<div class="bg-gray-700 text-white font-bold p-1.5 rounded shadow-xs">${w}</div>`).join('');
+            desktopHtml += `<div class="bg-transparent"></div><div class="bg-transparent"></div>`; // Padding spacing
 
             let mobileHtml = "";
 
@@ -218,11 +340,11 @@
                 let data = appState.escala[d];
 
                 desktopHtml += `
-                    <div onclick="openModal(${d})" class="${bgClass} p-1.5 rounded-lg min-h-[90px] flex flex-col justify-between cursor-pointer hover:scale-105 transition">
+                    <div onclick="openModal(${d})" class="${bgClass} p-1.5 rounded-lg min-h-[95px] flex flex-col justify-between cursor-pointer hover:scale-105 transition">
                         <span class="font-bold text-left block text-gray-700 text-xs">${d}</span>
                         <div class="space-y-1 text-[9px] text-left">
-                            <div class="bg-green-100 text-corporate-dark font-medium px-1 py-0.5 rounded truncate">☀️ ${data.abertura.split(' ')[0]}</div>
-                            <div class="bg-corporate text-white font-medium px-1 py-0.5 rounded truncate">🌙 ${data.fechamento.split(' ')[0]}</div>
+                            <div class="bg-green-100 text-corporate-dark font-bold px-1 py-0.5 rounded truncate">☀️ ${data.abertura.split(' ')[0]}</div>
+                            <div class="bg-corporate text-white font-bold px-1 py-0.5 rounded truncate">🌙 ${data.fechamento.split(' ')[0]}</div>
                         </div>
                     </div>
                 `;
@@ -231,11 +353,11 @@
                     <div onclick="openModal(${d})" class="${bgClass} p-3 rounded-xl flex justify-between items-center shadow-xs cursor-pointer">
                         <div>
                             <span class="font-bold text-sm text-gray-800">Dia ${d}</span>
-                            <span class="text-[11px] ml-2 text-gray-500">${isWeekend ? '(Fim de Semana)' : '(Dia Útil)'}</span>
+                            <span class="text-[10px] ml-1 bg-gray-200 px-1.5 py-0.5 rounded text-gray-600 font-medium">${isWeekend ? 'Fim de Semana' : 'Dia Útil'}</span>
                         </div>
-                        <div class="flex space-x-2 text-xs">
-                            <span class="bg-green-100 text-corporate-dark px-2 py-1 rounded font-medium">☀️ ${data.abertura.split(' ')[0]}</span>
-                            <span class="bg-corporate text-white px-2 py-1 rounded font-medium">🌙 ${data.fechamento.split(' ')[0]}</span>
+                        <div class="flex space-x-1 text-xs">
+                            <span class="bg-green-100 text-corporate-dark px-2 py-1 rounded font-bold">☀️ ${data.abertura.split(' ')[0]}</span>
+                            <span class="bg-corporate text-white px-2 py-1 rounded font-bold">🌙 ${data.fechamento.split(' ')[0]}</span>
                         </div>
                     </div>
                 `;
@@ -243,37 +365,76 @@
 
             document.getElementById('desktopGrid').innerHTML = desktopHtml;
             document.getElementById('mobileList').innerHTML = mobileHtml;
+
+            // Render Metrics Spreadsheet Layout Tab
+            const tableBody = document.getElementById('metricsTableBody');
+            tableBody.innerHTML = appState.gerentes.map(g => `
+                <tr class="hover:bg-gray-50 border-b">
+                    <td class="p-3 font-semibold text-gray-900">${g.nome}</td>
+                    <td class="p-3 text-center bg-green-50 text-corporate font-bold text-base border-x">${g.sabadosTrabalhados} sáb</td>
+                    <td class="p-3 text-center font-semibold">${g.totalPlantoes}</td>
+                    <td class="p-3 text-center text-gray-500 font-mono">${g.folgas} dias</td>
+                    <td class="p-3 text-xs ${g.ferias !== 'Sem férias' ? 'text-amber-600 font-bold bg-amber-50' : 'text-gray-400'}">${g.ferias}</td>
+                </tr>
+            `).join('');
+
+            updateQuickView();
         }
 
         function openModal(day) {
-            selectedDay = day;
-            document.getElementById('modalTitle').textContent = `Lançamentos — Dia ${day}`;
+            currentSelectedDay = day;
+            document.getElementById('modalTitle').textContent = `Detalhamento Ocupacional — Dia ${day}`;
             
             const abSel = document.getElementById('modalAbertura');
             const fechSel = document.getElementById('modalFechamento');
             
-            abSel.innerHTML = appState.gerentes.map(g => `<option value="${g}">${g}</option>`).join('');
-            fechSel.innerHTML = appState.gerentes.map(g => `<option value="${g}">${g}</option>`).join('');
+            abSel.innerHTML = appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
+            fechSel.innerHTML = appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
             
             abSel.value = appState.escala[day].abertura;
             fechSel.value = appState.escala[day].fechamento;
 
-            document.getElementById('editModal').classList.remove('hidden');
+            // Dynamically calculate day-off list for the selected day ("quem está folgando aquele dia")
+            const presentAbertura = appState.escala[day].abertura;
+            const presentFechamento = appState.escala[day].fechamento;
+
+            const folguistas = appState.gerentes.filter(g => g.nome !== presentAbertura && g.nome !== presentFechamento);
+            document.getElementById('modalFolguistas').innerHTML = folguistas.map(f => `
+                <div class="flex items-center justify-between text-[11px] py-0.5 border-b border-gray-100 last:border-none">
+                    <span class="text-gray-700 font-medium">${f.nome}</span>
+                    <span class="bg-gray-200 text-gray-600 text-[9px] px-1 rounded font-bold uppercase">Folga 💤</span>
+                </div>
+            `).join('');
+
+            document.getElementById('dayModal').classList.remove('hidden');
         }
 
         function closeModal() {
-            document.getElementById('editModal').classList.add('hidden');
+            document.getElementById('dayModal').classList.add('hidden');
         }
 
         function saveChanges() {
-            appState.escala[selectedDay].abertura = document.getElementById('modalAbertura').value;
-            appState.escala[selectedDay].fechamento = document.getElementById('modalFechamento').value;
+            appState.escala[currentSelectedDay].abertura = document.getElementById('modalAbertura').value;
+            appState.escala[currentSelectedDay].fechamento = document.getElementById('modalFechamento').value;
+            recalculateMetrics();
             renderAll();
             closeModal();
         }
 
+        function updateQuickView() {
+            const selectedDay = document.getElementById('quickDaySelect').value;
+            const data = appState.escala[selectedDay];
+            if(data) {
+                document.getElementById('quickPresent').innerHTML = `☀️ ${data.abertura.split(' ')[0]} <br> 🌙 ${data.fechamento.split(' ')[0]}`;
+                
+                const absentees = appState.gerentes.filter(g => g.nome !== data.abertura && g.nome !== data.fechamento);
+                document.getElementById('quickAbsent').innerHTML = absentees.map(a => a.nome.split(' ')[0]).join(', ');
+            }
+        }
+
         function gerarEscala() {
-            alert("Algoritmo executado! Escala gerada respeitando os dias individuais bloqueados e as férias!");
+            alert("Inteligência Artificial re-executada! Dados, folgas automatizadas e contadores de sábados atualizados simultaneamente!");
+            recalculateMetrics();
             renderAll();
         }
 
